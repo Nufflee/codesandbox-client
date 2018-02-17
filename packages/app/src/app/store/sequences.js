@@ -95,6 +95,7 @@ export const removeNotification = actions.removeNotification;
 export const addNotification = factories.addNotification(props`message`, props`type`);
 
 export const forkSandbox = sequence('forkSandbox', [
+<<<<<<< HEAD
     set(state`editor.isForkingSandbox`, true),
     actions.forkSandbox,
     actions.moveModuleContent,
@@ -104,6 +105,17 @@ export const forkSandbox = sequence('forkSandbox', [
     factories.updateSandboxUrl(props`sandbox`),
     ensurePackageJSON,
     set(state`editor.isForkingSandbox`, false)
+=======
+  set(state`editor.isForkingSandbox`, true),
+  actions.forkSandbox,
+  actions.moveModuleContent,
+  actions.setForkedSandbox,
+  set(state`editor.currentId`, props`sandbox.id`),
+  factories.addNotification('Forked sandbox!', 'success'),
+  factories.updateSandboxUrl(props`sandbox`),
+  ensurePackageJSON,
+  set(state`editor.isForkingSandbox`, false),
+>>>>>>> Fixed bug related to using dictionary
 ]);
 
 export const ensureOwnedSandbox = sequence('ensureOwnedSandbox', [
