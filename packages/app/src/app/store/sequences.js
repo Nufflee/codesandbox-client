@@ -260,6 +260,7 @@ export const setSandbox = [
 ];
 
 export const loadSandbox = factories.withLoadApp([
+<<<<<<< HEAD
     set(state`editor.error`, null),
     when(state`editor.sandboxes.${props`id`}`),
     {
@@ -284,4 +285,39 @@ export const loadSandbox = factories.withLoadApp([
         ]
     },
     set(state`editor.isLoading`, false)
+=======
+  set(state`editor.error`, null),
+  when(state`editor.sandboxes.${props`id`}`),
+  {
+    true: [
+      set(state`editor.currentId`, props`id`),
+      set(props`sandbox`, state`editor.sandboxes.${props`id`}`),
+      actions.setCurrentModuleShortid,
+      actions.setMainModuleShortid,
+      actions.setInitialTab,
+      actions.setUrlOptions,
+      actions.setWorkspace,
+    ],
+    false: [
+      set(state`editor.isLoading`, true),
+      set(state`editor.notFound`, false),
+      actions.getSandbox,
+      {
+        success: [
+          actions.addSandbox,
+          set(state`editor.currentId`, props`sandbox.id`),
+          actions.setCurrentModuleShortid,
+          actions.setMainModuleShortid,
+          actions.setInitialTab,
+          actions.setUrlOptions,
+          actions.setWorkspace,
+          ensurePackageJSON,
+        ],
+        notFound: set(state`editor.notFound`, true),
+        error: set(state`editor.error`, props`error.message`),
+      },
+    ],
+  },
+  set(state`editor.isLoading`, false),
+>>>>>>> Initial refactor
 ]);
