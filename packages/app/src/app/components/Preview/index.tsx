@@ -53,20 +53,20 @@ export function evaluateInSandbox(sandboxId: string, command: string) {
 
 >>>>>>> refactor components to TS:packages/app/src/app/components/Preview/index.tsx
 type Props = {
-  onInitialized: (preview: BasePreview) => () => void // eslint-disable-line no-use-before-define
+  onInitialized?: (preview: BasePreview) => () => void // eslint-disable-line no-use-before-define
   sandbox: Sandbox
-  extraModules: { [path: string]: { code: string, path: string } }
+  extraModules?: { [path: string]: { code: string, path: string } }
   currentModule: Module
   settings: Settings
-  initialPath: string
+  initialPath?: string
   isInProjectView: boolean
-  onClearErrors: () => void
-  onAction: (action: Object) => void
-  onOpenNewWindow: () => void
-  onToggleProjectView: () => void
-  isResizing: boolean
-  alignRight: () => void
-  alignBottom: () => void
+  onClearErrors?: () => void
+  onAction?: (action: Object) => void
+  onOpenNewWindow?: () => void
+  onToggleProjectView?: () => void
+  isResizing?: boolean
+  alignRight?: () => void
+  alignBottom?: () => void
   onResize?: (height: number) => void
   delay?: number
   showNavigation?: boolean
