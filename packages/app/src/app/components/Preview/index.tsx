@@ -60,6 +60,7 @@ type Props = {
   settings: Settings
   initialPath?: string
   isInProjectView: boolean
+  showDevtools?: boolean
   onClearErrors?: () => void
   onAction?: (action: Object) => void
   onOpenNewWindow?: () => void
