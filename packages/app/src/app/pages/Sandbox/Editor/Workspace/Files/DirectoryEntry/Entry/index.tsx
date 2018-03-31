@@ -20,26 +20,25 @@ import { Right, NotSyncedIconWithMargin } from './elements';
 type Props = {
     id: string;
     title: string;
+    state: string;
     shortid: string;
     depth: number;
-    isOpen: boolean;
-    hasChildren: boolean;
     type: string;
     active: boolean;
-    connectDragSource: ConnectDragSource;
+    connectDragSource: ConnectDragSource; // eslint-disable-line
     isNotSynced: boolean;
     isMainModule: boolean;
     moduleHasError: boolean;
-    root: boolean;
+    rightColors: string[];
+    setCurrentModule: (id: string) => void;
+    onCreateModuleClick: () => void;
     onCreateDirectoryClick: () => void;
     onClick: () => void;
     markTabsNotDirty: () => void;
-    onCreateModuleClick: () => void;
+    rename: (shortid: string, title: string) => void;
     onRenameCancel: () => void;
     renameValidator: (id: string, title: string) => boolean;
-    rename: (shortid: string, title: string) => void;
     deleteEntry: (shortid: string, title: string) => void;
-    setCurrentModule: (id: string) => void;
 };
 
 type State = {
@@ -108,7 +107,7 @@ class Entry extends React.PureComponent<Props, State> {
             type,
             active,
             setCurrentModule,
-            connectDragSource,
+            connectDragSource, // eslint-disable-line
             onCreateModuleClick,
             onCreateDirectoryClick,
             deleteEntry,
@@ -117,7 +116,8 @@ class Entry extends React.PureComponent<Props, State> {
             rename,
             isNotSynced,
             isMainModule,
-            moduleHasError
+            moduleHasError,
+            rightColors
         } = this.props;
         const { state, error, selected, hovering } = this.state;
 
@@ -158,6 +158,7 @@ class Entry extends React.PureComponent<Props, State> {
                         onMouseEnter={this.onMouseEnter}
                         onMouseLeave={this.onMouseLeave}
                         alternative={isMainModule}
+                        rightColors={rightColors}
                         noTransition
                     >
                         <EntryIcons type={type} error={moduleHasError} />
@@ -183,6 +184,7 @@ class Entry extends React.PureComponent<Props, State> {
                                         onCreateDirectory={onCreateDirectoryClick}
                                         onDelete={deleteEntry && this.delete}
                                         onEdit={rename && this.rename}
+                                        active={active}
                                     />
                                 )}
                             </Right>
@@ -192,122 +194,6 @@ class Entry extends React.PureComponent<Props, State> {
             </div>
         );
     }
-<<<<<<< HEAD
-    return false;
-  };
-
-  rename = () => {
-    this.setState({ state: 'editing' });
-    return true; // To close it
-  };
-
-  setCurrentModule = () => this.props.setCurrentModule(this.props.id);
-
-  onMouseEnter = () => this.setState({ hovering: true });
-  onMouseLeave = () => this.setState({ hovering: false });
-
-  render() {
-    const {
-      title,
-      depth,
-      isOpen,
-      hasChildren,
-      type,
-      active,
-      setCurrentModule,
-      connectDragSource,
-      onCreateModuleClick,
-      onCreateDirectoryClick,
-      deleteEntry,
-      onClick,
-      markTabsNotDirty,
-      rename,
-      isNotSynced,
-      isMainModule,
-      moduleHasError,
-      root,
-      rightColors,
-    } = this.props;
-    const { state, error, selected, hovering } = this.state;
-
-    const items = [
-      onCreateModuleClick && {
-        title: 'New Module',
-        action: onCreateModuleClick,
-        icon: FileIcon,
-      },
-      onCreateDirectoryClick && {
-        title: 'New Directory',
-        action: onCreateDirectoryClick,
-        icon: FolderIcon,
-      },
-      rename && {
-        title: 'Rename',
-        action: this.rename,
-        icon: EditIcon,
-      },
-      deleteEntry && {
-        title: 'Delete',
-        action: this.delete,
-        color: theme.red.darken(0.2)(),
-        icon: DeleteIcon,
-      },
-    ].filter(x => x);
-
-    return connectDragSource(
-      <div>
-        <ContextMenu items={items}>
-          <EntryContainer
-            onClick={setCurrentModule ? this.setCurrentModule : onClick}
-            onDoubleClick={markTabsNotDirty}
-            depth={depth}
-            nameValidationError={error}
-            active={active}
-            editing={state === 'editing' || selected}
-            onMouseEnter={this.onMouseEnter}
-            onMouseLeave={this.onMouseLeave}
-            alternative={isMainModule}
-            rightColors={rightColors}
-            noTransition
-          >
-            <EntryIcons
-              type={type}
-              error={moduleHasError}
-            />
-            {state === 'editing' ? (
-              <EntryTitleInput
-                title={title}
-                onChange={this.handleValidateTitle}
-                onCancel={this.resetState}
-                onCommit={this.handleRename}
-              />
-            ) : (
-              <EntryTitle title={title} />
-            )}
-            {isNotSynced && !state && <NotSyncedIconWithMargin />}
-            {state === '' && (
-              <Right>
-                {isMainModule ? (
-                  <span style={{ opacity: hovering ? 1 : 0 }}>main</span>
-                ) : (
-                  <EditIcons
-                    hovering={hovering}
-                    onCreateFile={onCreateModuleClick}
-                    onCreateDirectory={onCreateDirectoryClick}
-                    onDelete={deleteEntry && this.delete}
-                    onEdit={rename && this.rename}
-                    active={active}
-                  />
-                )}
-              </Right>
-            )}
-          </EntryContainer>
-        </ContextMenu>
-      </div>
-    );
-  }
-=======
->>>>>>> more fixes
 }
 
 const entrySource = {

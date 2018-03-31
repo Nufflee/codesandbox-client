@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { listen, dispatch } from 'codesandbox-api';
-import { LogType } from './types';
 
 import ClearIcon from 'react-icons/lib/md/clear-all';
 
@@ -11,20 +10,20 @@ import Input from './Input';
 
 import { Container, Messages } from './elements';
 
-export type IMessage = {
+export type Message = {
     type: 'message' | 'command' | 'return';
     logType: 'log' | 'warn' | 'info' | 'error';
     arguments: any[];
 };
 
 type Props = {
-    updateStatus: (type: string) => void;
     sandboxId: string;
     hidden: boolean;
+    updateStatus: (type: string) => void;
 };
 
 type State = {
-    messages: string[];
+    messages: Message[];
     scrollToBottom: boolean;
 };
 
@@ -33,8 +32,8 @@ class Console extends React.Component<Props, State> {
         messages: [],
         scrollToBottom: true
     };
-    list;
     listener;
+    list;
 
     componentDidMount() {
         this.listener = listen(this.handleMessage);
@@ -95,7 +94,7 @@ class Console extends React.Component<Props, State> {
         }
     };
 
-    getType = (message: LogType) => {
+    getType = (message: 'info' | 'log' | 'warn' | 'error') => {
         if (message === 'log' || message === 'info') {
             return 'info';
         }
@@ -107,7 +106,7 @@ class Console extends React.Component<Props, State> {
         return 'error';
     };
 
-    addMessage(message: LogType, args: any[], type?: string) {
+    addMessage(message, args, type?) {
         this.props.updateStatus(this.getType(message));
 
         this.setState({
@@ -143,19 +142,13 @@ class Console extends React.Component<Props, State> {
         this.addMessage('log', [ command ], 'command');
 
         // TODO move everything of frames to store and this command too
-        evaluateInSandbox(this.props.sandboxId, command);
+        dispatch({ type: 'evaluate', command });
     };
 
-<<<<<<< HEAD
-    // TODO move everything of frames to store and this command too
-    dispatch({ type: 'evaluate', command });
-  };
-=======
     render() {
         if (this.props.hidden) {
             return null;
         }
->>>>>>> more fixes
 
         return (
             <Container>
@@ -164,7 +157,6 @@ class Console extends React.Component<Props, State> {
                         this.list = el;
                     }}
                 >
-                    {/* eslint-disable react/no-array-index-key */}
                     {this.state.messages.map((mes, i) => <Message key={i} message={mes} />)}
                 </Messages>
                 <Input evaluateConsole={this.evaluateConsole} />
