@@ -21,7 +21,7 @@ type Props = {
     onDelete: (id: string) => void;
 };
 
-export const SandboxList: React.SFC<Props> = ({ sandboxes, isCurrentUser, onDelete }: Props) => (
+export const SandboxList: React.SFC<Props> = ({ sandboxes, isCurrentUser, onDelete }) => (
     <Table>
         <thead>
             <tr style={{ height: '3rem' }}>
