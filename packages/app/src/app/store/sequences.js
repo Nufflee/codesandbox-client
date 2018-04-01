@@ -107,7 +107,8 @@ export const forkSandbox = sequence('forkSandbox', [
   set(state`editor.isForkingSandbox`, true),
   actions.forkSandbox,
   actions.moveModuleContent,
-  set(state`editor.sandboxes.${props`sandbox.id`}`, props`sandbox`),
+  set(props`sandbox`, props`forkedSandbox`),
+  actions.addSandbox,
   set(state`editor.currentId`, props`sandbox.id`),
   factories.addNotification('Forked sandbox!', 'success'),
   factories.updateSandboxUrl(props`sandbox`),
@@ -268,8 +269,7 @@ export const resetLive = [
   unset(state`live.roomInfo`),
 ];
 
-export const setSandbox = [
-  actions.addSandbox,
+export const setSandbox = sequence('setSandbox', [
   when(state`live.isLoading`),
   {
     true: [],
@@ -281,19 +281,22 @@ export const setSandbox = [
       },
     ],
   },
-  set(state`editor.currentId`, props`sandbox.id`),
+  set(state`editor.currentId`, props`id`),
   actions.setCurrentModuleShortid,
   actions.setMainModuleShortid,
   actions.setInitialTab,
   actions.setUrlOptions,
   actions.setWorkspace,
-];
+]);
 
 export const loadSandbox = factories.withLoadApp([
   set(state`editor.error`, null),
   when(state`editor.sandboxes.${props`id`}`),
   {
-    true: setSandbox,
+    true: [
+      set(props`sandbox`, state`editor.sandboxes.${props`id`}`),
+      setSandbox,
+    ],
     false: [
       set(state`editor.isLoading`, true),
       set(state`editor.notFound`, false),
@@ -302,7 +305,7 @@ export const loadSandbox = factories.withLoadApp([
       set(state`editor.changedModuleShortids`, []),
       actions.getSandbox,
       {
-        success: [setSandbox, ensurePackageJSON],
+        success: [actions.addSandbox, setSandbox, ensurePackageJSON],
         notFound: set(state`editor.notFound`, true),
         error: set(state`editor.error`, props`error.message`),
       },
