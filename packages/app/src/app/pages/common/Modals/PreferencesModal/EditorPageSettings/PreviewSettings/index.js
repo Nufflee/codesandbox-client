@@ -1,5 +1,4 @@
 import React from 'react';
-import { inject, observer } from 'mobx-react';
 
 import {
   Title,
@@ -19,6 +18,8 @@ function PreviewSettings({ store, signals }) {
         value,
       }),
   });
+
+  const relativeUrlPrefix = store.preferences.settings.relativeUrlPrefix || '/';
 
   return (
     <div>
@@ -52,6 +53,36 @@ function PreviewSettings({ store, signals }) {
             {...bindValue('instantPreviewEnabled')}
           />
           <SubDescription>Show preview on every keypress.</SubDescription>
+          <Rule />
+          <PaddedPreference
+            title="Relative preview URLs"
+            type="boolean"
+            {...bindValue('relativeUrlsEnabled')}
+          />
+          <SubDescription>
+            Use relative (shortened) preview URLs.
+          </SubDescription>
+          {store.preferences.settings.relativeUrlsEnabled && (
+            <React.Fragment>
+              <Rule />
+              <PaddedPreference
+                title="Relative URL prefix"
+                type="string"
+                placeholder="/"
+                {...bindValue('relativeUrlPrefix')}
+              />
+              <SubDescription>
+                The relative (shortened) URL prefix to be used. The prefix
+                &apos;{relativeUrlPrefix}&apos; will redirect &apos;{relativeUrlPrefix.endsWith(
+                  '/'
+                )
+                  ? relativeUrlPrefix.slice(0, -1)
+                  : relativeUrlPrefix}/somePath&apos; to &apos;https://{
+                  store.editor.currentSandbox.id
+                }.codesandbox.io/somePath&apos;
+              </SubDescription>
+            </React.Fragment>
+          )}
         </PreferenceContainer>
       </SubContainer>
     </div>

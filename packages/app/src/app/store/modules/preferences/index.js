@@ -13,6 +13,8 @@ export default Module({
       livePreviewEnabled: true,
       lintEnabled: true,
       instantPreviewEnabled: false,
+      relativeUrlsEnabled: false,
+      relativeUrlPrefix: '/',
       fontSize: 14,
       fontFamily: '',
       lineHeight: 1.5,

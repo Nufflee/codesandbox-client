@@ -162,6 +162,8 @@ export type Preferences = {
   prettifyOnSaveEnabled: ?boolean,
   lintEnabled: ?boolean,
   instantPreviewEnabled: ?boolean,
+  relativeUrlsEnabled: ?boolean,
+  relativeUrlPrefix: ?boolean,
   fontSize: ?number,
   fontFamily: ?string,
   clearConsoleEnabled: ?boolean,

@@ -7,6 +7,8 @@ export default {
     livePreviewEnabled: types.boolean,
     lintEnabled: types.boolean,
     instantPreviewEnabled: types.boolean,
+    relativeUrlsEnabled: types.boolean,
+    relativeUrlPrefix: types.string,
     fontSize: types.number,
     fontFamily: types.string,
     lineHeight: types.number,

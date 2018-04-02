@@ -3,6 +3,7 @@ import * as React from 'react';
 import type { Sandbox, Module, Preferences } from 'common/types';
 import { listen, dispatch, registerFrame } from 'codesandbox-api';
 import { debounce } from 'lodash';
+import { parse as parseUrl } from 'url';
 
 import { frameUrl } from 'common/utils/url-generator';
 import { getModulePath } from 'common/sandbox/modules';
@@ -49,7 +50,9 @@ class BasePreview extends React.Component<Props, State> {
       frameInitialized: false,
       history: [],
       historyPosition: -1,
-      urlInAddressBar: frameUrl(props.sandbox.id, props.initialPath || ''),
+      urlInAddressBar: props.settings.relativeUrlsEnabled
+        ? props.settings.relativeUrlPrefix
+        : frameUrl(props.sandbox.id, props.initialPath || ''),
       url: null,
     };
 
@@ -238,9 +241,18 @@ class BasePreview extends React.Component<Props, State> {
 
   sendUrl = () => {
     const { urlInAddressBar } = this.state;
+    const { sandboxId, settings } = this.props;
+
+    let url = urlInAddressBar;
+
+    if (settings.relativeUrlsEnabled) {
+      url =
+        parseUrl(frameUrl(sandboxId)).href.slice(0, -1) +
+        parseUrl(urlInAddressBar).path.substring(1);
+    }
 
     // $FlowIssue
-    document.getElementById('sandbox').src = urlInAddressBar;
+    document.getElementById('sandbox').src = url;
 
     this.setState({
       history: [urlInAddressBar],
@@ -289,14 +301,35 @@ class BasePreview extends React.Component<Props, State> {
 
   commitUrl = (url: string) => {
     const { history, historyPosition } = this.state;
+    const { settings } = this.props;
 
     const currentHistory = history[historyPosition] || '';
+
     if (currentHistory !== url) {
+      let newUrl = url;
+
+      if (settings.relativeUrlsEnabled) {
+        let prefix = settings.relativeUrlPrefix;
+
+        if (!prefix.endsWith('/')) {
+          prefix += '/';
+        }
+
+        newUrl =
+          prefix +
+          newUrl.substring(
+            newUrl.indexOf(parseUrl(newUrl).host) +
+              parseUrl(newUrl).host.length +
+              1
+          );
+      }
+
       history.length = historyPosition + 1;
+
       this.setState({
-        history: [...history, url],
+        history: [...history, newUrl],
         historyPosition: historyPosition + 1,
-        urlInAddressBar: url,
+        urlInAddressBar: newUrl,
       });
     }
   };
@@ -317,13 +350,12 @@ class BasePreview extends React.Component<Props, State> {
       dragging,
     } = this.props;
     const { historyPosition, history, urlInAddressBar } = this.state;
-    const url = urlInAddressBar || frameUrl(sandbox.id);
 
     return (
       <Container style={{ flex: 1 }}>
         {showNavigation && (
           <Navigator
-            url={decodeURIComponent(url)}
+            url={decodeURIComponent(urlInAddressBar)}
             onChange={this.updateUrl}
             onConfirm={this.sendUrl}
             onBack={historyPosition > 0 ? this.handleBack : null}
